@@ -37,6 +37,13 @@ def f_rename(args: argparse.Namespace):
     utils.rename_repo(repos, args.repo[0], args.new_name)
 
 
+def f_freeze(_):
+    repos = utils.get_repos()
+    for name, path in repos.items():
+        print(f'{path},{name}')
+        subprocess.run(['git', 'remote', '-v'], cwd=path)
+
+
 def f_info(_):
     all_items, to_display = info.get_info_items()
     print('In use:', ','.join(to_display))
@@ -178,6 +185,9 @@ def main(argv=None):
                       choices=utils.get_repos(),
                       help="remove the chosen repo(s)")
     p_rm.set_defaults(func=f_rm)
+
+    p_freeze = subparsers.add_parser('freeze', help='print all repo information')
+    p_freeze.set_defaults(func=f_freeze)
 
     p_rename = subparsers.add_parser('rename', help='rename a repo')
     p_rename.add_argument(
